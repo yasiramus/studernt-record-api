@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended:true }));
 
 // port number
-const port = 6000;
+const port = 5050;
 
 // setting the custmTasks to empty array 
 let studentRecords = [];
@@ -37,29 +37,51 @@ app.get("/studentrecord", function (req, res) {
 });
 
 // posting data using raw js fxn
-app.post("/studentrecord", function (req, res) {
+app.post("/studentrecord", async function (req, res) {
 
    try {
        
-       const detailsOfStudent = {
+    //    const detailsOfStudent = {
            
-           firstName: req.body.firstName,
+    //        firstName: req.body.firstName,
            
-           lastName: req.body.lastName,
+    //        lastName: req.body.lastName,
 
-           age: req.bodyage,
+    //        age: req.bodyage,
            
-           studentClass: req.body.studentClass,
+    //        studentClass: req.body.studentClass,
            
-           dateAdmmited: req.body.dateAdmmited,
+    //        dateAdmmited: req.body.dateAdmmited,
            
-           DateCompleted:req.body.DateCompleted
+    //        DateCompleted:req.body.DateCompleted
 
-       }
+    //    }
+
+    const { firstName, lastName, age, studentClass, dateAdmitted, dateCompleted } = req.body;
     
-    if (!detailsOfStudent) {
+    if (!firstName) {
 
-        res.status(404).json("field can't be empty")
+        res.status(404).json("first name field can't be empty")
+
+    } else if (!lastName) {
+
+        res.status(404).json("last name field can't be empty")
+
+    }else if (!age) {
+
+        res.status(404).json("age field can't be empty")
+
+    } else if (!studentClass) {
+
+        res.status(404).json("class field can't be empty")
+
+    }else if (!dateAdmitted) {
+
+        res.status(404).json("date admmited field can't be empty")
+
+    } else if (!dateCompleted) {
+
+        res.status(404).json("dateCompleted field can't be empty")
 
     } else {
 
@@ -67,14 +89,24 @@ app.post("/studentrecord", function (req, res) {
 
             id: uuidv4(),
             
-            detailsOfStudent,
+            firstName,
+
+            lastName,
+
+            age,
+
+            studentClass,
+
+            dateAdmitted,
+
+            dateCompleted,
          
             completed: false
          
         }
 
-        studentRecords.push(addStudentData);
-        
+        await studentRecords.push(addStudentData);
+
         // this return the one(object) which has just been added within the array 
         res.status(201).json(addStudentData)
     }
@@ -88,7 +120,7 @@ app.post("/studentrecord", function (req, res) {
 });
 
 // updating the todo to true or false 
-app.put("/studentrecord/:id", function (req, res) {
+app.put("/studentrecord/:id", async function (req, res) {
 
     try {
         
@@ -112,7 +144,7 @@ app.put("/studentrecord/:id", function (req, res) {
         })
 
         // this returning a single object of the todo based on the id
-        const recordMatches = studentRecords.find(data => data.id === id);
+        const recordMatches = await studentRecords.find(data => data.id === id);
         
         res.status(200).json(recordMatches);
 
@@ -124,7 +156,7 @@ app.put("/studentrecord/:id", function (req, res) {
 });
 
 // deleting a todo using the id
-app.delete("/studentrecord/:id", function (req, res) {
+app.delete("/studentrecord/:id", async function (req, res) {
     
     try {
        
@@ -136,11 +168,11 @@ app.delete("/studentrecord/:id", function (req, res) {
 
         } else {
 
-            const studentRecordMatches = studentRecords.find(todo => todo.id === id);
+            const studentRecordMatches = await studentRecords.find(todo => todo.id === id);
 
             studentRecords = studentRecords.filter(todo => todo.id !== id);
             
-            console.log(studentRecordMatches)
+            // console.log(studentRecordMatches)
 
             // this returning a single object of the todo based on the id
             res.status(202).json(studentRecordMatches )
